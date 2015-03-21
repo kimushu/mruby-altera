@@ -218,6 +218,18 @@ pio_is_low(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+pio_toggle(mrb_state *mrb, mrb_value self)
+{
+  struct pio_data *data;
+  uint32_t cur;
+  data = DATA_GET_PTR(mrb, self, &pio_type, struct pio_data);
+  cur = __builtin_ldwio(&data->reg->data) & data->mask;
+  __buildin_stwio(&data->reg->outset, cur ^ data->mask);
+  __builtin_stwio(&data->reg->outclear, cur);
+  return self;
+}
+
+static mrb_value
 pio_assert(mrb_state *mrb, mrb_value self)
 {
   struct pio_data *data;
@@ -441,6 +453,7 @@ altera_piocore_init(mrb_state *mrb, struct RClass *mod)
   mrb_define_alias (mrb, cls, "set?"            , "high?");
   mrb_define_alias (mrb, cls, "clear"           , "low");
   mrb_define_alias (mrb, cls, "cleared?"        , "low?");
+  mrb_define_method(mrb, cls, "toggle"          , pio_toggle            , MRB_ARGS_NONE());
   mrb_define_method(mrb, cls, "assert"          , pio_assert            , MRB_ARGS_NONE());
   mrb_define_method(mrb, cls, "negate"          , pio_negate            , MRB_ARGS_NONE());
   mrb_define_method(mrb, cls, "asserted?"       , pio_is_asserted       , MRB_ARGS_NONE());

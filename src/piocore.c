@@ -64,6 +64,12 @@ pio_initialize(mrb_state *mrb, mrb_value self)
   mrb_int base, width;
   struct pio_data *data;
 
+  data = (struct pio_data*)DATA_PTR(self);
+  if (data) {
+    mrb_free(mrb, data);
+  }
+  mrb_data_init(self, NULL, &pio_type);
+
   mrb_get_args(mrb, "ii", &base, &width);
 
   if ((base & (sizeof(struct avalon_pio_regs) - 1)) != 0) {
@@ -83,7 +89,8 @@ pio_initialize(mrb_state *mrb, mrb_value self)
   data->mask = (1u << width) - 1;
   data->polarity = 0; /* All pins are initialized as active-high */
 
-  return pio_wrap(mrb, mrb_class_ptr(self), data);
+  mrb_data_init(self, data, &pio_type);
+  return self;
 }
 
 static mrb_value

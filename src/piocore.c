@@ -224,7 +224,7 @@ pio_toggle(mrb_state *mrb, mrb_value self)
   uint32_t cur;
   data = DATA_GET_PTR(mrb, self, &pio_type, struct pio_data);
   cur = __builtin_ldwio(&data->reg->data) & data->mask;
-  __buildin_stwio(&data->reg->outset, cur ^ data->mask);
+  __builtin_stwio(&data->reg->outset, cur ^ data->mask);
   __builtin_stwio(&data->reg->outclear, cur);
   return self;
 }

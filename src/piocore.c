@@ -171,7 +171,7 @@ pio_slice(mrb_state *mrb, mrb_value self)
   new_data->mask = ((1u << (msb - lsb + 1)) - 1) << lsb;
   ++new_data->owner->refs;
 
-  return pio_wrap(mrb, mrb_class_ptr(self), new_data);
+  return pio_wrap(mrb, mrb_obj_class(mrb, self), new_data);
 }
 
 static mrb_value
